@@ -27,6 +27,11 @@ by the end user with a regex. By default, such trigger won't be specified.
 The plugin must handle addressed, notice, and private message requests and
 respond using the same method.
 
+In addition, the plugin must handle un-addressed channel queries, but this
+won't be enabled by default. This will allow a bot to respond to, say,
+triggered `!factoid` channel requests or even untriggered messages, such as
+`hello`.
+
 ## Adding Factoids
 
 Adding a new factoid is done by separating the keyword and the definition
