@@ -27,29 +27,53 @@ method irc-to-me ($irc, $e, %res) {
     return IRC_NOT_HANDLED
         if $!trigger and %res<what>.subst-mutate: $!trigger, '';
 
-    if %res<what> ~~ /^ 'purge' \s+ 'factoid' \s+ $<fact>=(.+) \s*/ {
-        my $fact = ~$<fact>;
-
-        my $sth = $!dbh.prepare('SELECT id FROM factoids WHERE fact = ?');
-        $sth.execute($fact);
-        my @facts = $sth.fetchall-array;
-
-        return $irc.respond: |%res :what("Did not find $fact in the database")
-            unless @facts;
-
-        $!dbh.do: "DELETE FROM factoids WHERE id IN({join ',', '?'xx@facts})";
-
-        return $irc.respond: |%res
-            :what("Purged factoid `$fact` and its {@facts.elems} edits");
-    }
-    elsif %res<what> ~~ /($<fact>=.+) \s+ ':is:' \s+ ($<def>=.+)/ {
-        $!dbh.do:
-            'INSERT INTO factoids (fact, def) VALUES (?, ?)',
-            $<fact>,
-            $<def>;
-
-        $irc.respond: |%res, :what("Stored $<fact> as $<def>");
+    %res<what> = do given %res<what> {
+        when /^ 'purge' \s+ 'factoid' \s+ $<fact>=(.+) \s*/ {
+            self!purge-fact: $<fact>;
+        }
+        when /^ 'delete' \s+ 'factoid' \s+ $<fact>=(.+) \s*/ {
+            self!delete-fact: $<fact>;
+        }
+        when /$<fact>=(.+) \s+ ':is:' \s+ $<def>=(.+)/ {
+            self!add-fact: $<fact def>;
+        }
+        default { self!find-fact: $_, :1limit; }
     }
 
-    return IRC_NOT_HANDLED;
+    $irc.respond: |%res;
+}
+
+method !add-fact (Str() $fact, Str() $def) {
+    $!dbh.do: 'INSERT INTO factoids (fact, def) VALUES (?,?)', $fact, $def;
+    return "Added $fact as $def";
+}
+
+method !delete-fact (Str() $fact) {
+    return "Didn't find $fact in the database"
+        unless self!find-facts: $fact, :1limit;
+
+    self!add-fact: $fact, '';
+    return "Marked factoid `$fact` as deleted";
+}
+
+method !find-facts (Str() $fact, Int :$limit) {
+    my $sth;
+    my $sql = 'SELECT id FROM factoids WHERE fact = ? ';
+    if $limit {
+        $sth = $!dbh.prepare: $sql ~ 'LIMIT ?';
+        $sth.execute: $fact, $limit;
+    }
+    else {
+        $sth = $!dbh.prepare: $sql;
+        $sth.execute: $fact;
+    }
+    return $sth.fetchall-array;
+}
+
+method !purge-fact (Str() $fact) {
+    my @facts = self!find-facts: $fact
+        or return "Did not find $fact in the database";
+
+    $!dbh.do: "DELETE FROM factoids WHERE id IN({ join ',', '?' xx @facts })";
+    return "Purged factoid `$fact` and its {@facts.elems} edits";
 }
