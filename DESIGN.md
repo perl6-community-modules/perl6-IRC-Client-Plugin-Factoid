@@ -98,6 +98,7 @@ constant instead, to allow the next plugin in the chain to handle the query
 ---
 > A possible future implementation can offer suggestions instead of a plain
 'not found' message.
+
 ---
 
 ## Viewing Revision History
@@ -144,6 +145,7 @@ think, currently, I'm fine with setting "too large" at 400 chars and simply
 sending all output to the user, special-casing in-channel response for super
 large outputs with a notice that the user must use a `/notice` or `/msg` to
 view the output.
+
 ---
 
 ## Level-2 Implementation: Help
@@ -152,4 +154,5 @@ view the output.
 > There should be a way for a user to request a list of available commands
 and explanation of how to use them. This is likely should be done with some
 sort of a Help plugin, which is not implemented yet.
+
 ---
