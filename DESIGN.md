@@ -103,7 +103,7 @@ constant instead, to allow the next plugin in the chain to handle the query
 
 ## Viewing Revision History
 
-Viewing arevision history of a factoid is done by using
+Viewing a revision history of a factoid is done by using
 `^history FACTOID`, where the carrot
 is part of the command, to avoid clashes with defined factoids, and
 `FACTOID` is the name of the factoid whose history to view.
