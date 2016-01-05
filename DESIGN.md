@@ -17,6 +17,11 @@ The plugin also needs a means to specify a trigger, to allow the end user to
 prevent clashes between the factoid plugin and other functionality of their
 client.
 
+## Database
+
+The factoids are to be stored in an SQLite database. The filename of the
+database must be changeable by the user.
+
 ## Trigger
 
 All commands provided by the plugin must be prefixed with a trigger defined
