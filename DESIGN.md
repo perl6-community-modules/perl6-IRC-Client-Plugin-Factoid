@@ -2,7 +2,7 @@
 
 ## Purpose Overview
 
-The plugin provides features of a "factoid bot." Given a keyword—a factoid—, it
+The plugin provides features of a "factoid bot." Given a keyword—a factoid—it
 responds with a pre-defined value for that factoid.
 
 IRC users can add, modify, and delete factoids. Revision history is kept to
