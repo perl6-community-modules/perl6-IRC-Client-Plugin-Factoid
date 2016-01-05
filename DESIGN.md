@@ -95,8 +95,7 @@ constant instead, to allow the next plugin in the chain to handle the query
 
 #### Level-2 Implementation
 
-<span color=red> A possible future implementation can offer suggestions instead of a plain
-   'not found' message.</span>
+<div color=red> A possible future implementation can offer suggestions instead of a plain 'not found' message.</div>
 
 ## Viewing Revision History
 
