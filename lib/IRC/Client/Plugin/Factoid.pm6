@@ -17,8 +17,8 @@ method irc-start-up ($) {
     $!dbh.do: q:to/END-SQL/;
         CREATE TABLE factoids (
             id   INTEGER PRIMARY KEY,
-            fact TEXT,
-            def  TEXT
+            fact TEXT COLLATE NOCASE,
+            def  TEXT COLLATE NOCASE
         );
     END-SQL
 }
@@ -34,14 +34,9 @@ method irc-privmsg ($irc, $e) {
 }
 
 method irc-to-me ($irc, $e, %res) {
-    GLOBAL::<IRC::Client::Plugin::Factoid>:delete;
-    require IRC::Client::Plugin::Factoid;
-    say "Reloaded 23232323!";
-    return;
-
     my $res = self.handle: %res<what>;
     return $res if $res === IRC_NOT_HANDLED;
-    $irc.reponse: |%res, :what($res);
+    $irc.respond: |%res, :what($res);
 }
 
 method handle ($what) {
@@ -49,16 +44,20 @@ method handle ($what) {
         if $!trigger and $what.subst-mutate: $!trigger, '';
 
     return do given $what {
-        when /^ 'purge' \s+ 'factoid' \s+ $<fact>=(.+) \s*/ {
+        when /^ '^purge' \s+ $<fact>=(.+) \s*/ {
             self!purge-fact: $<fact>;
         }
-        when /^ 'delete' \s+ 'factoid' \s+ $<fact>=(.+) \s*/ {
+        when /^ '^delete' \s+ $<fact>=(.+) \s*/ {
             self!delete-fact: $<fact>;
         }
         when /$<fact>=(.+) \s+ ':is:' \s+ $<def>=(.+)/ {
             self!add-fact: $<fact>, $<def>;
         }
-        default { self!find-facts: $_, :1limit; }
+        default {
+            my $def = self!find-facts($_, :1limit).first<def>;
+            $def ?? $def !! $!say-not-found
+                ?? 'nothing found' !! IRC_NOT_HANDLED;
+        }
     }
 }
 
@@ -77,22 +76,24 @@ method !delete-fact (Str() $fact) {
 
 method !find-facts (Str() $fact, Int :$limit) {
     my $sth;
-    my $sql = 'SELECT id FROM factoids WHERE fact = ? ';
+    my $sql = 'SELECT * FROM factoids WHERE fact = ? ORDER BY id DESC';
     if $limit {
-        $sth = $!dbh.prepare: $sql ~ 'LIMIT ?';
+        $sth = $!dbh.prepare: $sql ~ ' LIMIT ?';
         $sth.execute: $fact, $limit;
     }
     else {
         $sth = $!dbh.prepare: $sql;
         $sth.execute: $fact;
     }
-    return $sth.fetchall-array;
+    return $sth.fetchall-AoH;
 }
 
 method !purge-fact (Str() $fact) {
     my @facts = self!find-facts: $fact
         or return "Did not find $fact in the database";
 
-    $!dbh.do: "DELETE FROM factoids WHERE id IN({ join ',', '?' xx @facts })";
+    my @ids = @facts.map: *<id>;
+    $!dbh.do:
+        "DELETE FROM factoids WHERE id IN({ join ',', '?' xx @ids})", @ids;
     return "Purged factoid `$fact` and its {@facts.elems} edits";
 }
