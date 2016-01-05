@@ -23,11 +23,32 @@ method irc-start-up ($) {
     END-SQL
 }
 
-method irc-to-me ($irc, $e, %res) {
-    return IRC_NOT_HANDLED
-        if $!trigger and %res<what>.subst-mutate: $!trigger, '';
+method irc-privmsg ($irc, $e) {
+    return IRC_NOT_HANDLED unless $e<params>[0] ~~ /^ '#&'/;
+    my $res = self.handle: $e<params>[1].subst: /^':'/, '';
+    return $res if $res === IRC_NOT_HANDLED;
+    $irc.respond:
+        :where($e<params>[0]),
+        :how<privmsg>,
+        :what($res);
+}
 
-    %res<what> = do given %res<what> {
+method irc-to-me ($irc, $e, %res) {
+    GLOBAL::<IRC::Client::Plugin::Factoid>:delete;
+    require IRC::Client::Plugin::Factoid;
+    say "Reloaded 23232323!";
+    return;
+
+    my $res = self.handle: %res<what>;
+    return $res if $res === IRC_NOT_HANDLED;
+    $irc.reponse: |%res, :what($res);
+}
+
+method handle ($what) {
+    return IRC_NOT_HANDLED
+        if $!trigger and $what.subst-mutate: $!trigger, '';
+
+    return do given $what {
         when /^ 'purge' \s+ 'factoid' \s+ $<fact>=(.+) \s*/ {
             self!purge-fact: $<fact>;
         }
@@ -35,12 +56,10 @@ method irc-to-me ($irc, $e, %res) {
             self!delete-fact: $<fact>;
         }
         when /$<fact>=(.+) \s+ ':is:' \s+ $<def>=(.+)/ {
-            self!add-fact: $<fact def>;
+            self!add-fact: $<fact>, $<def>;
         }
-        default { self!find-fact: $_, :1limit; }
+        default { self!find-facts: $_, :1limit; }
     }
-
-    $irc.respond: |%res;
 }
 
 method !add-fact (Str() $fact, Str() $def) {
