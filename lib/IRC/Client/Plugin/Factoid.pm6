@@ -17,8 +17,8 @@ method irc-start-up ($) {
     $!dbh.do: q:to/END-SQL/;
         CREATE TABLE factoids (
             id   INTEGER PRIMARY KEY,
-            fact TEXT COLLATE NOCASE,
-            def  TEXT COLLATE NOCASE
+            fact TEXT,
+            def  TEXT
         );
     END-SQL
 }
