@@ -166,3 +166,18 @@ and explanation of how to use them. This is likely should be done with some
 sort of a Help plugin, which is not implemented yet.
 
 ---
+
+## Level-2 Implementation: Dump All
+
+---
+> **Note:** this feature is currently just a brain-storm and not a spec
+
+---
+
+Dumping all factoids is done by using `^dump`, where the carrot
+is part of the command, to avoid clashes with defined factoids.
+
+This command will [pastebin](#handling-of-large-output) all the factoids and
+their definitions. The command can potentially take an argument to specify
+what and how should be pastebinned: for example, the binary SQLite db can be
+uploaded somewhere, or revision history can be included in the pastebin.
