@@ -95,8 +95,10 @@ constant instead, to allow the next plugin in the chain to handle the query
 
 #### Level-2 Implementation
 
+---
 > A possible future implementation can offer suggestions instead of a plain
 'not found' message.
+---
 
 ## Viewing Revision History
 
@@ -134,8 +136,7 @@ If the output
 is too large, it should be placed into a pastebin and the link to it given
 to the user.
 
-<hr>
-
+---
 > **IMPLEMENTATION DETAILS ISSUE:** what is
 considered "too large" should really be set somewhere in IRC::Client object.
 Also, the pastebinning should likely be done by a separate pastebin plugin. I
@@ -143,11 +144,12 @@ think, currently, I'm fine with setting "too large" at 400 chars and simply
 sending all output to the user, special-casing in-channel response for super
 large outputs with a notice that the user must use a `/notice` or `/msg` to
 view the output.
-
-<hr>
+---
 
 ## Level-2 Implementation: Help
 
+---
 > There should be a way for a user to request a list of available commands
 and explanation of how to use them. This is likely should be done with some
 sort of a Help plugin, which is not implemented yet.
+---
