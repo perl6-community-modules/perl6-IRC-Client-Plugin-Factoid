@@ -1,4 +1,4 @@
-use lib <lib ../lib /home/zoffix/Desktop/CPANPRC/perl6-IRC-Client/lib>;
+use lib <lib ../lib>;
 use IRC::Client;
 use IRC::Client::Plugin::Debugger;
 use IRC::Client::Plugin::Factoid;
