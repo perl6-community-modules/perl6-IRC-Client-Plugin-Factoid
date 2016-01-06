@@ -51,6 +51,15 @@ It needs to be evaluated whether there's an issue
 with adding a factoid containing multiple `:is:` words and then subsequent
 retrieval/deletion of such a factoid.
 
+### Case-sensitivity
+
+Factoid names must be case-insensitive, as it simplifies look up greatly.
+However, some factoids may have differnt values depending on their case
+(e.g. descriptions of `int` and `Int` Perl 6 types). Thus, it must be
+possible to enable case-sensitivity per-factoid. This is to be done
+with command `:IS:` instead of regular `:is:`. Factoids added with such a
+command must be case-sensitive when doing a look up, deleting, or purging.
+
 ## Modifying Factoids
 
 Modification of a factoid is done the same way as
