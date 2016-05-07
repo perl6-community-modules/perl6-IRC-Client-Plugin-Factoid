@@ -5,9 +5,6 @@
     "description"  : "IRC factoid bot",
     "depends"      : [
         "IRC::Client",
-        "Number::Denominate",
-        "WWW::Google::Time",
-        "Lingua::Conjunction",
         "DBIish"
     ],
     "test-depends" : [ "Test" ],
