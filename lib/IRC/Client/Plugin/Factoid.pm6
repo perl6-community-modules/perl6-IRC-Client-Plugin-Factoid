@@ -2,7 +2,7 @@ use IRC::Client;
 use DBIish;
 use DBDish::SQLite::Connection;
 
-unit class IRC::Client::Plugin::Factoid:ver<1.001001> is IRC::Client::Plugin;
+unit class IRC::Client::Plugin::Factoid does IRC::Client::Plugin;
 
 has Regex  $.trigger;
 has Bool   $.say-not-found = True;
