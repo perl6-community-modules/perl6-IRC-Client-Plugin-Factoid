@@ -1,4 +1,4 @@
-use IRC::Client::Plugin;
+use IRC::Client;
 use DBIish;
 use DBDish::SQLite::Connection;
 
