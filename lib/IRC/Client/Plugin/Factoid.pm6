@@ -9,7 +9,7 @@ has Bool   $.say-not-found = True;
 has Str    $.db-filename   = 'factoids.db';
 has DBDish::SQLite::Connection $!dbh;
 
-method irc-start-up ($) {
+method irc-started {
     my $need-deploy = not $!db-filename.IO.e;
     $!dbh = DBIish.connect: "SQLite", :database($!db-filename), :RaiseError;
     return unless $need-deploy;
