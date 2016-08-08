@@ -23,8 +23,15 @@ method irc-started {
     END-SQL
 }
 
-method irc-privmsg-channel ($e) { self.handle: $e.text; }
-method irc-to-me           ($e) { self.handle: $e.text; }
+method irc-to-me ($e) { self.handle: $e.text; }
+
+method irc-privmsg-channel ($e) {
+    return $.NEXT unless $!trigger;
+
+    my $text = $e.text;
+    return $.NEXT unless $text.subst-mutate: $!trigger, '';
+    self.handle: $text;
+}
 
 method handle ($what is copy) {
     return $.NEXT
