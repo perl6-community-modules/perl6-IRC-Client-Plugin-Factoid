@@ -23,25 +23,12 @@ method irc-start-up ($) {
     END-SQL
 }
 
-method irc-privmsg ($irc, $e) {
-    return IRC_NOT_HANDLED unless $e<params>[0] ~~ /^ '#&'/;
-    my $res = self.handle: $e<params>[1].subst: /^':'/, '';
-    return $res if $res === IRC_NOT_HANDLED;
-    $irc.respond:
-        :where($e<params>[0]),
-        :how<privmsg>,
-        :what($res);
-}
+method irc-privmsg-channel ($e) { self.handle: $e.text; }
+method irc-to-me           ($e) { self.handle: $e.text; }
 
-method irc-to-me ($irc, $e, %res) {
-    my $res = self.handle: %res<what>;
-    return $res if $res === IRC_NOT_HANDLED;
-    $irc.respond: |%res, :what($res);
-}
-
-method handle ($what) {
-    return IRC_NOT_HANDLED
-        if $!trigger and $what.subst-mutate: $!trigger, '';
+method handle ($what is copy) {
+    return $.NEXT
+        if $!trigger and not $what.subst-mutate: $!trigger, '';
 
     return do given $what {
         when /^ '^purge' \s+ $<fact>=(.+) \s*/ {
@@ -56,7 +43,7 @@ method handle ($what) {
         default {
             my $def = self!find-facts($_, :1limit).first<def>;
             $def ?? $def !! $!say-not-found
-                ?? 'nothing found' !! IRC_NOT_HANDLED;
+                ?? 'nothing found' !! $.NEXT;
         }
     }
 }
