@@ -6,7 +6,7 @@ IRC::Client::Plugin::Factoid - factoid bot
 
 # SYNOPSIS
 
-```perl6
+```raku
     use IRC::Client;
     use IRC::Client::Plugin::Factoid;
 
@@ -59,7 +59,7 @@ See [ATTRIBUTES section](#attributes) for valid arguments you can specify.
 
 # ATTRIBUTES
 
-```perl6
+```raku
     IRC::Client::Plugin::Factoid.new:
         :trigger(/^ '!'/)
         :!say-not-found
@@ -139,12 +139,12 @@ completely removes it from the database, including all of the edit history.
 # REPOSITORY
 
 Fork this module on GitHub:
-https://github.com/zoffixznet/perl6-IRC-Client-Plugin-Factoid
+https://github.com/raku-community-modules/IRC-Client-Plugin-Factoid
 
 # BUGS
 
 To report bugs or request features, please use
-https://github.com/zoffixznet/perl6-IRC-Client-Plugin-Factoid/issues
+https://github.com/raku-community-modules/IRC-Client-Plugin-Factoid/issues
 
 # AUTHOR
 
